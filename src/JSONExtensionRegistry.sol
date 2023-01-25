@@ -15,6 +15,7 @@ contract JSONExtensionRegistry is IJSONExtensionRegistry, ERC165 {
 
     function isContractAdmin(address contractAddress, address expectedAdmin)
         internal
+        view
         returns (bool)
     {
         // If we're calling from the contract or EOA
@@ -53,14 +54,14 @@ contract JSONExtensionRegistry is IJSONExtensionRegistry, ERC165 {
     /// @notice Contract Name Getter
     /// @dev Used to identify contract
     /// @return string contract name
-    function name() external returns (string memory) {
+    function name() external pure returns (string memory) {
         return "JSONMetadataRegistry";
     }
 
     /// @notice Contract Information URI Getter
     /// @dev Used to provide contract information
     /// @return string contract information uri
-    function contractInfo() external returns (string memory) {
+    function contractInfo() external pure returns (string memory) {
         // return contract information uri
         return "https://docs.zora.co/json-contract-registry";
     }
@@ -80,6 +81,8 @@ contract JSONExtensionRegistry is IJSONExtensionRegistry, ERC165 {
     {
         return contractsJSONURIs[contractAddress];
     }
+
+    error By(bytes4);
 
     function supportsInterface(bytes4 interfaceId) override public view returns (bool) {
         return

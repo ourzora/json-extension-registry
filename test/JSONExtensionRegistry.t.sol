@@ -9,16 +9,26 @@ import "../src/JSONExtensionRegistry.sol";
 
 contract MockOwnable is Ownable {}
 
-contract MockAccessControl is AccessControl {}
+contract MockAccessControl is AccessControl {
+    constructor() {
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+    }
+}
 
 contract MockContract is AccessControl {}
 
 contract JSONRegistryTest is Test {
     JSONExtensionRegistry public registry;
     string ipfsUri = "ipfs://hello";
-
+    
     function setUp() public {
         registry = new JSONExtensionRegistry();
+    }
+
+    function testRegistryI165() public {
+        assertTrue(registry.supportsInterface(0x01ffc9a7));
+        assertTrue(registry.supportsInterface(0x11556274));
+        assertFalse(registry.supportsInterface(0x000000a7));
     }
 
     function testCorrectOwner() public {
@@ -26,6 +36,19 @@ contract JSONRegistryTest is Test {
 
         registry.setContractJSONExtension(address(myOwnable), ipfsUri);
 
+        assertEq(registry.contractJSONExtension(address(myOwnable)), ipfsUri);
+    }
+
+    function testIncorrectOwnerOwnable() public {
+        MockOwnable myOwnable = new MockOwnable();
+        myOwnable.transferOwnership(address(0x1234));
+
+        vm.expectRevert(IJSONExtensionRegistry.RequiresContractAdmin.selector);
+        registry.setContractJSONExtension(address(myOwnable), ipfsUri);
+        assertEq(registry.contractJSONExtension(address(myOwnable)), "");
+
+        vm.prank(address(0x1234));
+        registry.setContractJSONExtension(address(myOwnable), ipfsUri);
         assertEq(registry.contractJSONExtension(address(myOwnable)), ipfsUri);
     }
 
@@ -52,11 +75,18 @@ contract JSONRegistryTest is Test {
         );
 
         registry.setContractJSONExtension(address(myAccessControl), ipfsUri);
-        assertEq(registry.contractJSONExtension(address(myAccessControl)), ipfsUri);
+        assertEq(
+            registry.contractJSONExtension(address(myAccessControl)),
+            ipfsUri
+        );
     }
 
     function testNoAdminRole() public {
         MockAccessControl notMyAccessControl = new MockAccessControl();
+        notMyAccessControl.revokeRole(
+            notMyAccessControl.DEFAULT_ADMIN_ROLE(),
+            address(this)
+        );
 
         vm.expectRevert(IJSONExtensionRegistry.RequiresContractAdmin.selector);
         registry.setContractJSONExtension(address(notMyAccessControl), ipfsUri);
