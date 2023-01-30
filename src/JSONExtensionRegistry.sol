@@ -6,18 +6,25 @@ import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {IAccessControl} from "@openzeppelin/contracts/access/IAccessControl.sol";
 import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 
-import {IVersion} from "./IVersion.sol";
+import {IContractInfo} from "./IContractInfo.sol";
 import {IOwnable} from "./IOwnable.sol";
 import {IJSONExtensionRegistry} from "./IJSONExtensionRegistry.sol";
 
+import {console2} from "forge-std/console2.sol";
+
 /// @notice JSONExtensionRegistry
-contract JSONExtensionRegistry is IJSONExtensionRegistry, ERC165, IVersion {
-    uint256 public version = 1;
+contract JSONExtensionRegistry is
+    IJSONExtensionRegistry,
+    ERC165,
+    IContractInfo
+{
+    uint256 public immutable version = 1;
+
     mapping(address => string) addressJSONExtensions;
 
     /// @notice isAdmin getter for a target address
     /// @param target target contract
-    /// @param address expected admin contract
+    /// @param expectedAdmin expected admin contract
     function isAdmin(address target, address expectedAdmin)
         internal
         view
@@ -49,12 +56,16 @@ contract JSONExtensionRegistry is IJSONExtensionRegistry, ERC165, IVersion {
     /// @notice Only allowed for contract admin
     /// @param target target contract
     /// @dev only allows contract admin of target (from msg.sender)
-    modifier onlyContractAdmin(address target) {
-        if (!isContractAdmin(target, msg.sender)) {
+    modifier onlyAdmin(address target) {
+        if (!isAdmin(target, msg.sender)) {
             revert RequiresContractAdmin();
         }
         _;
     }
+
+    /**
+        Contract Info Section
+     */
 
     /// @notice Contract Name Getter
     /// @dev Used to identify contract
@@ -71,17 +82,24 @@ contract JSONExtensionRegistry is IJSONExtensionRegistry, ERC165, IVersion {
         return "https://docs.zora.co/json-contract-registry";
     }
 
+    /** User setter IJSONExtensionRegistry */
+
     /// @notice Set address json extension file
     /// @dev Used to provide json extension information for rendering
-    /// @return address target contract information uri / data
     function setAddressJSONExtension(address target, string memory uri)
         external
         onlyAdmin(target)
     {
         addressJSONExtensions[target] = uri;
+        emit ContractExtensionJSONUpdated({
+            target: target,
+            updater: msg.sender,
+            newValue: uri
+        });
     }
 
     /// @notice Getter for address json extension file
+    /// @param target target contract for json extension
     /// @return address json extension for target
     function addressJSONExtension(address target)
         external
