@@ -6,11 +6,13 @@ import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {IAccessControl} from "@openzeppelin/contracts/access/IAccessControl.sol";
 import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 
+import {IVersion} from "./IVersion.sol";
 import {IOwnable} from "./IOwnable.sol";
 import {IJSONExtensionRegistry} from "./IJSONExtensionRegistry.sol";
 
 /// @notice JSONExtensionRegistry
-contract JSONExtensionRegistry is IJSONExtensionRegistry, ERC165 {
+contract JSONExtensionRegistry is IJSONExtensionRegistry, ERC165, IVersion {
+    uint256 public version = 1;
     mapping(address => string) contractsJSONURIs;
 
     function isContractAdmin(address contractAddress, address expectedAdmin)
@@ -67,10 +69,10 @@ contract JSONExtensionRegistry is IJSONExtensionRegistry, ERC165 {
     }
 
     ///
-    function setContractJSONExtension(
-        address contractAddress,
-        string memory uri
-    ) external onlyContractAdmin(contractAddress) {
+    function setContractJSONExtension(address contractAddress, string memory uri)
+        external
+        onlyContractAdmin(contractAddress)
+    {
         contractsJSONURIs[contractAddress] = uri;
     }
 
@@ -84,7 +86,12 @@ contract JSONExtensionRegistry is IJSONExtensionRegistry, ERC165 {
 
     error By(bytes4);
 
-    function supportsInterface(bytes4 interfaceId) override public view returns (bool) {
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override
+        returns (bool)
+    {
         return
             super.supportsInterface(interfaceId) ||
             interfaceId == type(IJSONExtensionRegistry).interfaceId;

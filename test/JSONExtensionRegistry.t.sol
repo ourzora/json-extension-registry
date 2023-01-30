@@ -59,6 +59,13 @@ contract JSONRegistryTest is Test {
         registry.setContractJSONExtension(address(notOwnable), ipfsUri);
     }
 
+    function testUserDirectAccount() public {
+        vm.prank(address(0x1234));
+        registry.setContractJSONExtension(address(0x1234), "http://zora.co/asdf/testing");
+
+        assertEq(registry.contractJSONExtension(address(0x1234)), "http://zora.co/asdf/testing");
+    }
+
     function testIncorrectOwner() public {
         MockOwnable notMyOwnable = new MockOwnable();
         notMyOwnable.renounceOwnership();
