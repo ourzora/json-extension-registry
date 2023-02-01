@@ -6,37 +6,44 @@ import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {IAccessControl} from "@openzeppelin/contracts/access/IAccessControl.sol";
 import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 
-import {IVersion} from "./IVersion.sol";
+import {IContractInfo} from "./IContractInfo.sol";
 import {IOwnable} from "./IOwnable.sol";
 import {IJSONExtensionRegistry} from "./IJSONExtensionRegistry.sol";
 
-/// @notice JSONExtensionRegistry
-contract JSONExtensionRegistry is IJSONExtensionRegistry, ERC165, IVersion {
-    uint256 public version = 1;
-    mapping(address => string) contractsJSONURIs;
+import {console2} from "forge-std/console2.sol";
 
-    function isContractAdmin(address contractAddress, address expectedAdmin)
+/// @notice JSONExtensionRegistry
+contract JSONExtensionRegistry is
+    IJSONExtensionRegistry,
+    ERC165,
+    IContractInfo
+{
+    uint256 public immutable version = 1;
+
+    mapping(address => string) getJSONExtensions;
+
+    /// @notice isAdmin getter for a target address
+    /// @param target target contract
+    /// @param expectedAdmin expected admin contract
+    function isAdmin(address target, address expectedAdmin)
         internal
         view
         returns (bool)
     {
         // If we're calling from the contract or EOA
-        if (contractAddress == expectedAdmin) {
+        if (target == expectedAdmin) {
             return true;
         }
-        if (contractAddress.code.length > 0) {
+        if (target.code.length > 0) {
             // Check if the contract supports ownable()
-            try IOwnable(contractAddress).owner() returns (address owner) {
+            try IOwnable(target).owner() returns (address owner) {
                 if (owner == expectedAdmin) {
                     return true;
                 }
             } catch {}
             // Check if the contract supports accessControl and allow admins
             try
-                IAccessControl(contractAddress).hasRole(
-                    bytes32(0x00),
-                    expectedAdmin
-                )
+                IAccessControl(target).hasRole(bytes32(0x00), expectedAdmin)
             returns (bool hasRole) {
                 if (hasRole) {
                     return true;
@@ -46,12 +53,19 @@ contract JSONExtensionRegistry is IJSONExtensionRegistry, ERC165, IVersion {
         return false;
     }
 
-    modifier onlyContractAdmin(address contractAddress) {
-        if (!isContractAdmin(contractAddress, msg.sender)) {
+    /// @notice Only allowed for contract admin
+    /// @param target target contract
+    /// @dev only allows contract admin of target (from msg.sender)
+    modifier onlyAdmin(address target) {
+        if (!isAdmin(target, msg.sender)) {
             revert RequiresContractAdmin();
         }
         _;
     }
+
+    /**
+        Contract Info Section
+     */
 
     /// @notice Contract Name Getter
     /// @dev Used to identify contract
@@ -68,24 +82,36 @@ contract JSONExtensionRegistry is IJSONExtensionRegistry, ERC165, IVersion {
         return "https://docs.zora.co/json-contract-registry";
     }
 
-    ///
-    function setContractJSONExtension(address contractAddress, string memory uri)
+    /** User setter IJSONExtensionRegistry */
+
+    /// @notice Set address json extension file
+    /// @dev Used to provide json extension information for rendering
+    function setJSONExtension(address target, string memory uri)
         external
-        onlyContractAdmin(contractAddress)
+        onlyAdmin(target)
     {
-        contractsJSONURIs[contractAddress] = uri;
+        getJSONExtensions[target] = uri;
+        emit JSONExtensionUpdated({
+            target: target,
+            updater: msg.sender,
+            newValue: uri
+        });
     }
 
-    function contractJSONExtension(address contractAddress)
+    /// @notice Getter for address json extension file
+    /// @param target target contract for json extension
+    /// @return address json extension for target
+    function getJSONExtension(address target)
         external
         view
         returns (string memory)
     {
-        return contractsJSONURIs[contractAddress];
+        return getJSONExtensions[target];
     }
 
-    error By(bytes4);
-
+    /// @notice See [EIP165]: EIP165 getter for json target
+    /// @param interfaceId interfaceId to test support for
+    /// @return boolean if the interfaceId is supported by the contract
     function supportsInterface(bytes4 interfaceId)
         public
         view

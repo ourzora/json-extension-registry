@@ -12,7 +12,7 @@ contract DeployRegistry is ScriptBase {
         setUp();
         bytes memory creationCode = type(JSONExtensionRegistry).creationCode;
         console2.logBytes32(keccak256(creationCode));
-        bytes32 salt = bytes32(0x0000000000000000000000000000000000000000d40ba0de8b5adb1cc4070000);
+        bytes32 salt = bytes32(0x72c959bb663305e01921c9b55b2f6c87a3cd5ce9a47589c8e477b44156248d63);
 
         vm.broadcast(deployer);
         IMMUTABLE_CREATE2_FACTORY.safeCreate2(salt, creationCode);
