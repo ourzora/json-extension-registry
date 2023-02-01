@@ -2,17 +2,17 @@
 pragma solidity ^0.8.16;
 
 interface IJSONExtensionRegistry {
-    function setContractJSONExtension(address contractAddress, string memory uri)
+    function setJSONExtension(address target, string memory uri)
         external;
 
-    function contractJSONExtension(address contractAddress)
+    function getJSONExtension(address target)
         external
         returns (string memory);
 
     error RequiresContractAdmin();
 
-    event ContractExtensionJSONUpdated(
-        address indexed contractAddress,
+    event JSONExtensionUpdated(
+        address indexed target,
         address indexed updater,
         string newValue
     );
