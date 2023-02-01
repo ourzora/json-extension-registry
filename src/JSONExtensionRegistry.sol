@@ -20,7 +20,7 @@ contract JSONExtensionRegistry is
 {
     uint256 public immutable version = 1;
 
-    mapping(address => string) addressJSONExtensions;
+    mapping(address => string) getJSONExtensions;
 
     /// @notice isAdmin getter for a target address
     /// @param target target contract
@@ -86,11 +86,11 @@ contract JSONExtensionRegistry is
 
     /// @notice Set address json extension file
     /// @dev Used to provide json extension information for rendering
-    function setAddressJSONExtension(address target, string memory uri)
+    function setJSONExtension(address target, string memory uri)
         external
         onlyAdmin(target)
     {
-        addressJSONExtensions[target] = uri;
+        getJSONExtensions[target] = uri;
         emit ContractExtensionJSONUpdated({
             target: target,
             updater: msg.sender,
@@ -101,12 +101,12 @@ contract JSONExtensionRegistry is
     /// @notice Getter for address json extension file
     /// @param target target contract for json extension
     /// @return address json extension for target
-    function addressJSONExtension(address target)
+    function getJSONExtension(address target)
         external
         view
         returns (string memory)
     {
-        return addressJSONExtensions[target];
+        return getJSONExtensions[target];
     }
 
     /// @notice See [EIP165]: EIP165 getter for json target

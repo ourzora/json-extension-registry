@@ -2,10 +2,10 @@
 pragma solidity ^0.8.16;
 
 interface IJSONExtensionRegistry {
-    function setAddressJSONExtension(address target, string memory uri)
+    function setJSONExtension(address target, string memory uri)
         external;
 
-    function addressJSONExtension(address target)
+    function getJSONExtension(address target)
         external
         returns (string memory);
 
