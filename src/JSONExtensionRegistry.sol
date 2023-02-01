@@ -91,7 +91,7 @@ contract JSONExtensionRegistry is
         onlyAdmin(target)
     {
         getJSONExtensions[target] = uri;
-        emit ContractExtensionJSONUpdated({
+        emit JSONExtensionUpdated({
             target: target,
             updater: msg.sender,
             newValue: uri

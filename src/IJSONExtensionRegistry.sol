@@ -11,7 +11,7 @@ interface IJSONExtensionRegistry {
 
     error RequiresContractAdmin();
 
-    event ContractExtensionJSONUpdated(
+    event JSONExtensionUpdated(
         address indexed target,
         address indexed updater,
         string newValue
