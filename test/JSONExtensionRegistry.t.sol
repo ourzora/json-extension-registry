@@ -27,7 +27,7 @@ contract JSONRegistryTest is Test {
 
     function testRegistryI165() public {
         assertTrue(registry.supportsInterface(0x01ffc9a7));
-        assertTrue(registry.supportsInterface(0xf1ed5bfa));
+        assertTrue(registry.supportsInterface(0x9ddf4705));
         assertFalse(registry.supportsInterface(0x000000a7));
     }
 
@@ -44,7 +44,10 @@ contract JSONRegistryTest is Test {
     }
 
     function testGetRegistryInfo() public {
-        assertEq(registry.contractInfo(), "https://docs.zora.co/json-contract-registry");
+        assertEq(
+            registry.contractInfo(),
+            "https://docs.zora.co/json-contract-registry"
+        );
     }
 
     function testIncorrectOwnerOwnable() public {
