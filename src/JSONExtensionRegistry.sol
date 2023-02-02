@@ -12,7 +12,9 @@ import {IJSONExtensionRegistry} from "./IJSONExtensionRegistry.sol";
 
 import {console2} from "forge-std/console2.sol";
 
-/// @notice JSONExtensionRegistry
+/// @notice Zora Labs Implementation for JSON Extension Registry v1
+/// @dev Repo: github.com/ourzora/json-extension-registry
+/// @author @iainnash / @mattlenz
 contract JSONExtensionRegistry is
     IJSONExtensionRegistry,
     ERC165,
@@ -53,6 +55,17 @@ contract JSONExtensionRegistry is
         return false;
     }
 
+    /// @notice Get user's admin status externally
+    /// @param target contract to check admin status for
+    /// @param expectedAdmin user to check if they are listed as an admin
+    function getIsAdmin(address target, address expectedAdmin)
+        external
+        view
+        returns (bool)
+    {
+        return isAdmin(target, expectedAdmin);
+    }
+
     /// @notice Only allowed for contract admin
     /// @param target target contract
     /// @dev only allows contract admin of target (from msg.sender)
@@ -60,6 +73,7 @@ contract JSONExtensionRegistry is
         if (!isAdmin(target, msg.sender)) {
             revert RequiresContractAdmin();
         }
+
         _;
     }
 
@@ -86,6 +100,8 @@ contract JSONExtensionRegistry is
 
     /// @notice Set address json extension file
     /// @dev Used to provide json extension information for rendering
+    /// @param target target address to set metadata for
+    /// @param uri uri to set metadata to
     function setJSONExtension(address target, string memory uri)
         external
         onlyAdmin(target)

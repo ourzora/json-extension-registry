@@ -17,6 +17,7 @@ contract MockAccessControl is AccessControl {
 
 contract MockContract is AccessControl {}
 
+/// @author @iainnash / @mattlenz
 contract JSONRegistryTest is Test {
     JSONExtensionRegistry public registry;
     string ipfsUri = "ipfs://hello";
@@ -27,7 +28,7 @@ contract JSONRegistryTest is Test {
 
     function testRegistryI165() public {
         assertTrue(registry.supportsInterface(0x01ffc9a7));
-        assertTrue(registry.supportsInterface(0xf1ed5bfa));
+        assertTrue(registry.supportsInterface(0x9ddf4705));
         assertFalse(registry.supportsInterface(0x000000a7));
     }
 
@@ -39,6 +40,17 @@ contract JSONRegistryTest is Test {
         assertEq(registry.getJSONExtension(address(myOwnable)), ipfsUri);
     }
 
+    function testGetName() public {
+        assertEq(registry.name(), "JSONMetadataRegistry");
+    }
+
+    function testGetRegistryInfo() public {
+        assertEq(
+            registry.contractInfo(),
+            "https://docs.zora.co/json-contract-registry"
+        );
+    }
+
     function testIncorrectOwnerOwnable() public {
         MockOwnable myOwnable = new MockOwnable();
         myOwnable.transferOwnership(address(0x1234));
@@ -47,6 +59,8 @@ contract JSONRegistryTest is Test {
         registry.setJSONExtension(address(myOwnable), ipfsUri);
         assertEq(registry.getJSONExtension(address(myOwnable)), "");
 
+        assertTrue(registry.getIsAdmin(address(myOwnable), address(0x1234)));
+
         vm.prank(address(0x1234));
         registry.setJSONExtension(address(myOwnable), ipfsUri);
         assertEq(registry.getJSONExtension(address(myOwnable)), ipfsUri);
@@ -54,6 +68,8 @@ contract JSONRegistryTest is Test {
 
     function testNotOwnable() public {
         MockContract notOwnable = new MockContract();
+
+        assertFalse(registry.getIsAdmin(address(notOwnable), address(this)));
 
         vm.expectRevert(IJSONExtensionRegistry.RequiresContractAdmin.selector);
         registry.setJSONExtension(address(notOwnable), ipfsUri);
