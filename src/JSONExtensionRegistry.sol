@@ -53,6 +53,17 @@ contract JSONExtensionRegistry is
         return false;
     }
 
+    /// @notice Get user's admin status externally
+    /// @param target contract to check admin status for
+    /// @param expectedAdmin user to check if they are listed as an admin
+    function getIsAdmin(address target, address expectedAdmin)
+        external
+        view
+        returns (bool)
+    {
+        return isAdmin(target, expectedAdmin);
+    }
+
     /// @notice Only allowed for contract admin
     /// @param target target contract
     /// @dev only allows contract admin of target (from msg.sender)
@@ -60,6 +71,7 @@ contract JSONExtensionRegistry is
         if (!isAdmin(target, msg.sender)) {
             revert RequiresContractAdmin();
         }
+
         _;
     }
 

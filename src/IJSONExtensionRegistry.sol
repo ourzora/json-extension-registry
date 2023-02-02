@@ -2,12 +2,14 @@
 pragma solidity ^0.8.16;
 
 interface IJSONExtensionRegistry {
-    function setJSONExtension(address target, string memory uri)
-        external;
+    function setJSONExtension(address target, string memory uri) external;
 
-    function getJSONExtension(address target)
+    function getJSONExtension(address target) external returns (string memory);
+
+    function getIsAdmin(address target, address expectedAdmin)
         external
-        returns (string memory);
+        view
+        returns (bool);
 
     error RequiresContractAdmin();
 
