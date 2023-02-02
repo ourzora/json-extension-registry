@@ -17,6 +17,7 @@ contract MockAccessControl is AccessControl {
 
 contract MockContract is AccessControl {}
 
+/// @author @iainnash / @mattlenz
 contract JSONRegistryTest is Test {
     JSONExtensionRegistry public registry;
     string ipfsUri = "ipfs://hello";
