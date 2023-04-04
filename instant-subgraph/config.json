@@ -1,0 +1,25 @@
+{
+  "version": "1",
+  "name": "JSONExtensionRegistry",
+  "abis": {
+    "JSONExtensionRegistry": {
+      "path": "./JSONExtensionRegistry.abi.json"
+    }
+  },
+  "chains": ["mainnet", "goerli"],
+  "instances": [
+    {
+      "abi": "JSONExtensionRegistry",
+      "address": "0xabcdefed93200601e1dfe26d6644758801d732e8",
+      "startBlock": 16544316,
+      "chain": "mainnet"
+    },
+    {
+      "abi": "JSONExtensionRegistry",
+      "address": "0xabcdefed93200601e1dfe26d6644758801d732e8",
+      "startBlock": 8423656,
+      "chain": "goerli"
+    }
+  ]
+}
+
