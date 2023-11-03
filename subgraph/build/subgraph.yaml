@@ -1,0 +1,37 @@
+specVersion: 0.0.5
+schema:
+  file: schema.graphql
+dataSources:
+  - kind: ethereum
+    name: JSONExtensionRegistry
+    network: zora-testnet
+    source:
+      abi: JSONExtensionRegistry
+      address: "0xABCDEFEd93200601e1dFe26D6644758801D732E8"
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ContractExtensionData
+      abis:
+        - name: JSONExtensionRegistry
+          file: JSONExtensionRegistry/abis/JSONExtensionRegistry.abi.json
+      eventHandlers:
+        - event: JSONExtensionUpdated(indexed address,indexed address,string)
+          handler: handleJSONExtensionUpdated
+      file: JSONExtensionRegistry/JSONExtensionRegistry.wasm
+templates:
+  - name: MetadataInfo
+    kind: file/ipfs
+    mapping:
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: templates/MetadataInfo/MetadataInfo.wasm
+      handler: handleJSONMetadataFetched
+      entities:
+        - MetadataInfo
+      abis:
+        - name: JSONExtensionRegistry
+          file: MetadataInfo/abis/JSONExtensionRegistry.abi.json

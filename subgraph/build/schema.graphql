@@ -1,0 +1,23 @@
+type ContractExtensionData @entity {
+  id: Bytes!
+
+  url: String!
+  updater: Bytes!
+
+  origin: Bytes!
+  updatedTx: Bytes!
+  updatedAt: BigInt!
+
+  metadata: MetadataInfo
+}
+
+type MetadataInfo @entity {
+  id: ID!
+  name: String
+  description: String
+  image: String
+  animationUrl: String
+  decimals: String
+
+  rawJson: String
+}

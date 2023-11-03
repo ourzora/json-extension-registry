@@ -1,0 +1,17 @@
+{
+  "name": "json-extension-registry-subgraph",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "fetch-abi": "curl https://zora.ether.actor/0xABCDEFEd93200601e1dFe26D6644758801D732E8/abi.json -o ./abis/JSONExtensionRegistry.abi.json",
+    "deploy": "goldsky subgraph deploy zora-json-extension-registry/0.0.1",
+    "build": "graph codegen && graph build"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-ts": "^0.31.0"
+  },
+  "devDependencies": {
+    "@graphprotocol/graph-cli": "^0.60.0"
+  }
+}
