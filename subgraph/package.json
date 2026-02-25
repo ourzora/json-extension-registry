@@ -5,7 +5,6 @@
   "license": "MIT",
   "scripts": {
     "fetch-abi": "curl https://zora.ether.actor/0xABCDEFEd93200601e1dFe26D6644758801D732E8/abi.json -o ./abis/JSONExtensionRegistry.abi.json",
-    "deploy": "goldsky subgraph deploy zora-json-extension-registry/0.0.1",
     "build": "graph codegen && graph build"
   },
   "dependencies": {
