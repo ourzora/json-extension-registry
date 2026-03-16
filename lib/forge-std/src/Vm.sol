@@ -105,9 +105,9 @@ interface VmSafe {
     function recordLogs() external;
     // Gets all the recorded logs, () => (logs)
     function getRecordedLogs() external returns (Log[] memory);
-    // Derive a private key from a provided mnenomic string (or mnenomic file path) at the derivation path m/44'/60'/0'/0/{index}
+    // Derive a private key from a provided mnemonic string (or mnemonic file path) at the derivation path m/44'/60'/0'/0/{index}
     function deriveKey(string calldata, uint32) external returns (uint256);
-    // Derive a private key from a provided mnenomic string (or mnenomic file path) at the derivation path {path}{index}
+    // Derive a private key from a provided mnemonic string (or mnemonic file path) at the derivation path {path}{index}
     function deriveKey(string calldata, string calldata, uint32) external returns (uint256);
     // Adds a private key to the local forge wallet and returns the address
     function rememberKey(uint256) external returns (address);
@@ -122,7 +122,7 @@ interface VmSafe {
     // ----
     // In case the returned value is a JSON object, it's encoded as a ABI-encoded tuple. As JSON objects
     // don't have the notion of ordered, but tuples do, they JSON object is encoded with it's fields ordered in
-    // ALPHABETICAL ordser. That means that in order to succesfully decode the tuple, we need to define a tuple that
+    // ALPHABETICAL order. That means that in order to successfully decode the tuple, we need to define a tuple that
     // encodes the fields in the same order, which is alphabetical. In the case of Solidity structs, they are encoded
     // as tuples, with the attributes in the order in which they are defined.
     // For example: json = { 'a': 1, 'b': 0xa4tb......3xs}
